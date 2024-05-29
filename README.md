@@ -4,8 +4,9 @@ Unity-Delaunay Library By Julian Ceipek
 
 Adopted And Modified By SAJI J (1ime002)
 
-Added Fixed and Updated:
+![](Images/LloydsRelaxation.png)
 
+Added Fixed and Updated:
 
 This File Contains:
 
@@ -19,11 +20,15 @@ Lloyd's Relaxation Explanation:
 
 Area = 1/2 * Summation of (X0*Y1 - X1*Y0)
 
+![](Images/Area.png)
+
 CrossProduct = X0*Y1 - X1*Y0;
 
 First, Area is calculated for each cell By iterating through all of the Vertices
 And then calculate the Cross Product of One Vertex(X0,Y0) and the Next Vertex(X1 + 1, Y1 + 1)
 last area/=2;
+
+![](Images/Centroid.png)
 
 x Component of the Centroid (Cx)= 1/6*Area * Summation of (X0 + X1) * CrossProduct;
 
