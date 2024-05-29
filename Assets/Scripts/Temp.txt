@@ -1,0 +1,129 @@
+using UnityEngine;
+using System.Collections.Generic;
+using Delaunay;
+using Delaunay.Geo;
+
+public class WeightedVoronoiStippling : MonoBehaviour
+{
+	[SerializeField] private int pointsCount = 100;
+	[SerializeField] private bool ShowDelaunayTriangulation;
+	[SerializeField] private bool ShowSpanningTree;
+	[SerializeField] private bool ShowVoronoiDiagram;
+	[SerializeField] private bool ShowLloydRelaxation;
+
+	private List<Vector2> points;
+	private List<Vector2> newPoints;
+	private List<uint> colors;
+	private float width = 64;
+	private float height = 64;
+	private List<LineSegment> edges = null;
+	//private List<LineSegment> spanningTree;
+	//private List<LineSegment> delaunayTriangulation;
+
+	void Awake ()
+	{
+		Setup ();
+	}
+
+	void Update ()
+	{
+		if (Input.anyKeyDown) {
+			Setup ();
+		}
+		
+		//update Lloyd's relaxation algorithm according to new points with lerp
+		if (newPoints != null && ShowLloydRelaxation)
+		{
+			var v = new Voronoi(points, colors, new Rect(0, 0, width, height));
+			v.LloydRelaxation(1);
+			edges = v.VoronoiDiagram();
+			newPoints = v.SiteCoords(); //Get the new points after Lloyd's relaxation algorithm
+			for (int i = 0; i < points.Count; i++) {
+				points [i] = Vector2.Lerp (points [i], newPoints [i], Time.deltaTime);
+			}
+		}
+	}
+
+	private void Setup ()
+	{
+		colors = new List<uint> ();
+		points = new List<Vector2>();
+		
+		for (int i = 0; i < pointsCount; i++)
+		{
+			colors.Add(0);
+			points.Add(new Vector2(Random.Range(0, width), Random.Range(0, height)));
+		}
+		
+		var v = new Voronoi(points, colors, new Rect(0, 0, width, height));
+		v.LloydRelaxation(1);
+		edges = v.VoronoiDiagram();
+		newPoints = v.SiteCoords(); //Get the new points after Lloyd's relaxation algorithm
+		
+		//spanningTree = v.SpanningTree(KruskalType.MINIMUM);
+		//delaunayTriangulation = v.DelaunayTriangulation();
+		
+	}
+	
+	
+
+	void OnDrawGizmos ()
+	{
+		/*if (points != null) {
+			Gizmos.color = Color.black;
+			for (int i = 0; i < points.Count; i++) {
+				Gizmos.DrawSphere (points [i], 0.2f);
+			}
+		}*/
+		
+		//Lloyd's relaxation algorithm points
+		if (newPoints != null && ShowLloydRelaxation) {
+			Gizmos.color = Color.red;
+			for (int i = 0; i < newPoints.Count; i++) {
+				Gizmos.DrawSphere (newPoints [i], 0.2f);
+			}
+		}
+		
+		
+		
+		//Voronoi Diagram
+		if (edges != null && ShowVoronoiDiagram) {
+			Gizmos.color = Color.black;
+			for (int i = 0; i< edges.Count; i++) {
+				Vector2 left = (Vector2)edges [i].p0;
+				Vector2 right = (Vector2)edges [i].p1;
+				Gizmos.DrawLine (left,right);
+			}
+		}
+
+		/*//Delaunay Triangulation
+		Gizmos.color = Color.black;
+		if (delaunayTriangulation != null && ShowDelaunayTriangulation) {
+			for (int i = 0; i< delaunayTriangulation.Count; i++) {
+				Vector2 left = (Vector2)delaunayTriangulation [i].p0;
+				Vector2 right = (Vector2)delaunayTriangulation [i].p1;
+				Gizmos.DrawLine (left, right);
+			}
+		}
+
+		//Spanning Tree of Delaunay Triangulation
+		if (spanningTree != null && ShowSpanningTree) {
+			Gizmos.color = Color.green;
+			for (int i = 0; i< spanningTree.Count; i++) {
+				LineSegment seg = spanningTree [i];				
+				Vector2 left = (Vector2)seg.p0;
+				Vector2 right = (Vector2)seg.p1;
+				Gizmos.DrawLine (left, right);
+			}
+		}*/
+		
+		
+
+		//Bounding Box
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawLine (new Vector2 (0, 0), new Vector2 (0, height));
+		Gizmos.DrawLine (new Vector2 (0, 0), new Vector2 (width, 0));
+		Gizmos.DrawLine (new Vector2 (width, 0), new Vector2 (width, height));
+		Gizmos.DrawLine (new Vector2 (0, height), new Vector2 (width, height));
+	}
+}
