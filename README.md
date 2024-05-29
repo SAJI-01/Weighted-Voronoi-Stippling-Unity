@@ -37,9 +37,14 @@ AtLast - Centroid = Centroid/6*Area
 Sources Used:
 
 https://en.wikipedia.org/wiki/Lloyd%27s_algorithm
+
 https://www.cs.ubc.ca/labs/imager/tr/2002/secord2002b/secord.2002b.pdf
+
 https://en.wikipedia.org/wiki/Delaunay_triangulation
+
 https://paulbourke.net/geometry/polygonmesh/
+
 https://www.youtube.com/watch?v=Bxdt6T_1qgc
+
 
 
