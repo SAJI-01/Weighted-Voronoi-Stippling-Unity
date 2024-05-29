@@ -1,22 +1,19 @@
 # Weighted-Voronoi-Stippling
 
-Unity-Delaunay Library By Julian Ceipek
+**Adopted And Modified By SAJI J ([1ime002](https://x.com/1ime002))**
 
-Adopted And Modified By SAJI J (1ime002)
+<img src= "./Images/LloydsRelaxation.png" width=600 height =560>
 
-![](Images/LloydsRelaxation.png =250x250)
-
-Added Fixed and Updated:
+## **AddedFixedandUpdated**
 
 This File Contains:
+ + Voronoi Diagram
+ + Delaunay Triangulation
+ + Fortunes Algorithm
+ + Lloyd's Relaxation
 
-Voronoi Diagram
-Delaunay Triangulation
-Fortunes Algorithm
-Lloyd's Relaxation
+## [Lloyd's Relaxation Explanation:](https://en.wikipedia.org/wiki/Lloyd%27s_algorithm)
 
-Lloyd's Relaxation Explanation:
-{
 
 Area = 1/2 * Summation of (X0*Y1 - X1*Y0)
 
@@ -24,7 +21,8 @@ Area = 1/2 * Summation of (X0*Y1 - X1*Y0)
 
 CrossProduct = X0*Y1 - X1*Y0;
 
-First, Area is calculated for each cell By iterating through all of the Vertices
+First, Area is calculated for each cell By iterating through all Vertices
+
 And then calculate the Cross Product of One Vertex(X0,Y0) and the Next Vertex(X1 + 1, Y1 + 1)
 last area/=2;
 
@@ -35,11 +33,15 @@ x Component of the Centroid (Cx)= 1/6*Area * Summation of (X0 + X1) * CrossProdu
 y Component of the Centroid (Cy)= 1/6*Area * Summation of (Y0 + Y1) * CrossProduct;
 
 Centroid = (Cx, Cy)
-AtLast - Centroid = Centroid/6*Area
-<returns> A list of the new points</returns>
-}
 
-Sources Used:
+AtLast - Centroid = Centroid/6*Area
+
+**returns** A list of the new points</returns>
+
+
+
+
+## **Sources Used:**
 
 https://en.wikipedia.org/wiki/Lloyd%27s_algorithm
 
@@ -51,5 +53,6 @@ https://paulbourke.net/geometry/polygonmesh/
 
 https://www.youtube.com/watch?v=Bxdt6T_1qgc
 
+**Unity-Delaunay Library By [Julian Ceipek](https://github.com/jceipek/Unity-delaunay)**
 
 
