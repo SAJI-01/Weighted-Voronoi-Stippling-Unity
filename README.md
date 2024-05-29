@@ -13,6 +13,7 @@ This File Contains:
  + Delaunay Triangulation
  + Fortunes Algorithm
  + Lloyd's Relaxation
+ + Spanning Tree of Delaunay Triangulation
 
 ## [Lloyd's Relaxation Explanation:](https://en.wikipedia.org/wiki/Lloyd%27s_algorithm)
 
