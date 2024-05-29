@@ -4,7 +4,7 @@ Unity-Delaunay Library By Julian Ceipek
 
 Adopted And Modified By SAJI J (1ime002)
 
-![](Images/LloydsRelaxation.png)
+![](Images/LloydsRelaxation.png =250x250)
 
 Added Fixed and Updated:
 
