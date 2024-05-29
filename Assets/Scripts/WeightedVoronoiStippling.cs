@@ -67,7 +67,7 @@ public class WeightedVoronoiStippling : MonoBehaviour
 		// draw voronoi diagram
 		if (ShowVoronoiDiagram)
 		{
-			Gizmos.color = Color.black;
+			Gizmos.color = Color.red;
 			if (points != null)
 			{
 				for (int i = 0; i < points.Count; i++)
@@ -90,7 +90,7 @@ public class WeightedVoronoiStippling : MonoBehaviour
 		// draw lloyd relaxation
 		if (ShowLloydRelaxation)
 		{
-			Gizmos.color = Color.black;
+			Gizmos.color = Color.blue;
 			if (newPoints != null)
 			{
 				for (int i = 0; i < newPoints.Count; i++)

@@ -168,8 +168,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointsCount: 600
-  ShowDelaunayTriangulation: 0
-  ShowSpanningTree: 0
   ShowVoronoiDiagram: 1
   ShowLloydRelaxation: 1
 --- !u!1 &330585543
