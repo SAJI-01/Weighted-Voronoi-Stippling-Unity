@@ -398,7 +398,7 @@ namespace Delaunay
 			return 0;
 		}
 
-		public List<Vector2> RelaxPoints()
+		public List<Vector2> RelaxPoints() //Lloyd's Algorithm
 		{
 			List<Vector2> newPoints = new List<Vector2>();
 			// Go through all sites
@@ -424,10 +424,10 @@ namespace Delaunay
 					y0 = region[j].y;
 					x1 = region[j+1].x;
 					y1 = region[j+1].y;
-					a = x0*y1 - x1*y0;
+					a = x0*y1 - x1*y0; //CrossProduct
 					signedArea += a;
-					centroid.x += (x0 + x1)*a;
-					centroid.y += (y0 + y1)*a;
+					centroid.x += (x0 + x1)*a; // x component of centroid
+					centroid.y += (y0 + y1)*a; // y component of centroid
 				}
 				// Do last vertex
 				x0 = region[^1].x;
@@ -447,6 +447,8 @@ namespace Delaunay
 			}
 			return newPoints;
 		}
+
+		
 	}
 /// <summary>
 /// This File Contains:
@@ -455,6 +457,7 @@ namespace Delaunay
 /// Delaunay Triangulation
 /// Fortunes Algorithm
 /// Lloyd's Relaxation
+/// Spanning Tree
 /// 
 /// Lloyd's Relaxation Explanation:
 /// {
