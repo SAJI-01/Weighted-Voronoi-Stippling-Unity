@@ -8,7 +8,7 @@
 
 <img src= "./Images/LloydsRelaxation.png" width=600 height =560>
 
-## **AddedFixedandUpdated**
+## **Added, Fixed and Updated**
 
 This File Contains:
  + Voronoi Diagram
