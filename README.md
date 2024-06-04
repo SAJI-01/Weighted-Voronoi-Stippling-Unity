@@ -1,4 +1,4 @@
-# Weighted-Voronoi-Stippling (inProcess)
+# Weighted-Voronoi-Stippling (Done)
 
 **Unity 2022.3.20f1**
 
@@ -18,6 +18,7 @@
 ## **Added Fixed and Updated**
 
 This File Contains:
+ + Weighted Voronoi Strippling
  + Voronoi Diagram
  + Delaunay Triangulation
  + Fortunes Algorithm
