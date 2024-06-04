@@ -7,7 +7,7 @@ namespace Delaunay
 	{
 		public sealed class LineSegment
 		{
-			public static int CompareLengths_MAX (LineSegment segment0, LineSegment segment1)
+			public static int CompareLengths_MAX (LineSegment segment0, LineSegment segment1) 
 			{
 				float length0 = Vector2.Distance ((Vector2)segment0.p0, (Vector2)segment0.p1);
 				float length1 = Vector2.Distance ((Vector2)segment1.p0, (Vector2)segment1.p1);

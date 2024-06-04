@@ -1,26 +1,31 @@
 using System.Collections.Generic;
 using Delaunay.Utils;
+using UnityEngine;
 
 namespace Delaunay
 {
 	
 	public sealed class Triangle: IDisposable
 	{
-		private List<Site> _sites;
-		public List<Site> sites {
-			get { return this._sites; }
-		}
-		
+		private List<Site> sites;
+		public List<Site> Sites => sites;
+
 		public Triangle (Site a, Site b, Site c)
 		{
-			_sites = new List<Site> () { a, b, c };
+			sites = new List<Site> () { a, b, c };
 		}
+		
 		
 		public void Dispose ()
 		{
-			_sites.Clear ();
-			_sites = null;
+			sites.Clear ();
+			sites = null;
 		}
-
+		
+		
+		
+		
+		
 	}
+	
 }

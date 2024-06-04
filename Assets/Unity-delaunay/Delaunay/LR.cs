@@ -1,20 +1,22 @@
 namespace Delaunay
 {
-	namespace LR
-	{
-		public enum Side
-		{
-			LEFT = 0,
-			RIGHT
-		}
+		public class LR {
 
-		public class SideHelper
-		{
-			public static Side Other (Side leftRight)
-			{
-				return leftRight == Side.LEFT ? Side.RIGHT : Side.LEFT;
+			public static readonly LR LEFT = new LR("left");
+			public static readonly LR RIGHT = new LR("right");
+
+			private string name;
+
+			public LR(string name) {
+				this.name = name;
+			}
+
+			public static LR Other(LR leftRight) {
+				return leftRight == LEFT ? RIGHT : LEFT;
+			}
+
+			public override string ToString() {
+				return name;
 			}
 		}
-
-	}
 }

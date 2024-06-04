@@ -2,20 +2,21 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Delaunay.Geo;
-using Delaunay.LR;
+
 
 namespace Delaunay
 {
 		
-	public sealed class Site: ICoord, IComparable
+	public sealed class Site: ICoord, IComparable //site = point
 	{
-		private static Stack<Site> _pool = new Stack<Site> ();
-		public static Site Create (Vector2 p, uint index, float weight, uint color)
+		private static Stack<Site> pool = new Stack<Site> ();
+		
+		public static Site Create (Vector2 p, uint index, float weight)
 		{
-			if (_pool.Count > 0) {
-				return _pool.Pop ().Init (p, index, weight, color);
+			if (pool.Count > 0) {
+				return pool.Pop ().Init (p, index, weight);
 			} else {
-				return new Site (p, index, weight, color);
+				return new Site (p, index, weight);
 			}
 		}
 		
@@ -24,7 +25,7 @@ namespace Delaunay
 //			sites.sort(Site.compare);
 			sites.Sort (); // XXX: Check if this works
 		}
-
+		
 		/**
 		 * sort sites on y, then x, coord
 		 * also change each site's _siteIndex to match its new position in the list
@@ -67,11 +68,13 @@ namespace Delaunay
 		}
 				
 		private Vector2 _coord;
-		public Vector2 Coord {
-			get { return _coord;}
+		public Vector2 Coord
+		{
+			get => _coord;
+			set => _coord = value;
 		}
-		
-		public uint color;
+
+		public uint color; // color using uint so that bitwise operations can be used
 		public float weight;
 		
 		private uint _siteIndex;
@@ -82,25 +85,24 @@ namespace Delaunay
 			get { return _edges;}
 		}
 		// which end of each edge hooks up with the previous edge in _edges:
-		private List<Side> _edgeOrientations;
+		private List<LR> _edgeOrientations;
 		// ordered list of points that define the region clipped to bounds:
 		private List<Vector2> _region;
 
-		private Site (Vector2 p, uint index, float weight, uint color)
+		private Site (Vector2 p, uint index, float weight)
 		{
 //			if (lock != PrivateConstructorEnforcer)
 //			{
 //				throw new Error("Site constructor is private");
 //			}
-			Init (p, index, weight, color);
+			Init (p, index, weight);
 		}
 		
-		private Site Init (Vector2 p, uint index, float weight, uint color)
+		private Site Init (Vector2 p, uint index, float weight)
 		{
 			_coord = p;
 			_siteIndex = index;
 			this.weight = weight;
-			this.color = color;
 			_edges = new List<Edge> ();
 			_region = null;
 			return this;
@@ -121,7 +123,7 @@ namespace Delaunay
 		{
 //			_coord = null;
 			Clear ();
-			_pool.Push (this);
+			pool.Push (this);
 		}
 		
 		private void Clear ()
@@ -167,7 +169,7 @@ namespace Delaunay
 				edge = _edges [i];
 				list.Add (NeighborSite (edge));
 			}
-			return list;
+			return list; 
 		}
 			
 		private Site NeighborSite (Edge edge)
@@ -181,7 +183,7 @@ namespace Delaunay
 			return null;
 		}
 		
-		internal List<Vector2> Region (Rect clippingBounds)
+		internal List<Vector2> Region (Rect clippingBounds) //Region: The area enclosed by the edges of a site
 		{
 			if (_edges == null || _edges.Count == 0) {
 				return new List<Vector2> ();
@@ -202,7 +204,7 @@ namespace Delaunay
 			EdgeReorderer reorderer = new EdgeReorderer (_edges, VertexOrSite.VERTEX);
 			_edges = reorderer.edges;
 			//trace("reordered:", _edges);
-			_edgeOrientations = reorderer.edgeOrientations;
+			_edgeOrientations = reorderer.EdgeOrientations;
 			reorderer.Dispose ();
 		}
 		
@@ -221,16 +223,9 @@ namespace Delaunay
 				return new List<Vector2> ();
 			}
 			edge = _edges [i];
-			Side orientation = _edgeOrientations [i];
-
-			if (edge.clippedEnds [orientation] == null) {
-				Debug.LogError ("XXX: Null detected when there should be a Vector2!");
-			}
-			if (edge.clippedEnds [SideHelper.Other (orientation)] == null) {
-				Debug.LogError ("XXX: Null detected when there should be a Vector2!");
-			}
+			LR orientation = _edgeOrientations [i];
 			points.Add ((Vector2)edge.clippedEnds [orientation]);
-			points.Add ((Vector2)edge.clippedEnds [SideHelper.Other (orientation)]);
+			points.Add ((Vector2)edge.clippedEnds [LR.Other(orientation)]);
 			
 			for (int j = i + 1; j < n; ++j) {
 				edge = _edges [j];
@@ -247,9 +242,9 @@ namespace Delaunay
 		
 		private void Connect (List<Vector2> points, int j, Rect bounds, bool closingUp = false)
 		{
-			Vector2 rightPoint = points [points.Count - 1];
+			Vector2 rightPoint = points [^1];
 			Edge newEdge = _edges [j] as Edge;
-			Side newOrientation = _edgeOrientations [j];
+			LR newOrientation = _edgeOrientations [j];
 			// the point that  must be connected to rightPoint:
 			if (newEdge.clippedEnds [newOrientation] == null) {
 				Debug.LogError ("XXX: Null detected when there should be a Vector2!");
@@ -344,10 +339,10 @@ namespace Delaunay
 				}
 				points.Add (newPoint);
 			}
-			if (newEdge.clippedEnds [SideHelper.Other (newOrientation)] == null) {
+			if (newEdge.clippedEnds [LR.Other (newOrientation)] == null) {
 				Debug.LogError ("XXX: Null detected when there should be a Vector2!");
 			}
-			Vector2 newRightPoint = (Vector2)newEdge.clippedEnds [SideHelper.Other (newOrientation)];
+			Vector2 newRightPoint = (Vector2)newEdge.clippedEnds [LR.Other (newOrientation)];
 			if (!CloseEnough (points [0], newRightPoint)) {
 				points.Add (newRightPoint);
 			}
@@ -356,7 +351,7 @@ namespace Delaunay
 		public float x {
 			get { return _coord.x;}
 		}
-		internal float y {
+		public float y {
 			get { return _coord.y;}
 		}
 		
@@ -368,10 +363,6 @@ namespace Delaunay
 	}
 }
 
-//	class PrivateConstructorEnforcer {}
-
-//	import flash.geom.Point;
-//	import flash.geom.Rectangle;
 	
 static class BoundsCheck
 {

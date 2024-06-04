@@ -31,7 +31,7 @@ namespace Delaunay
 				return Geo.Winding.NONE;
 			}
 
-			private float SignedDoubleArea () // XXX: I'm a bit nervous about this because Actionscript represents everything as doubles, not floats
+			private float SignedDoubleArea () 
 			{
 				int index, nextIndex;
 				int n = _vertices.Count;

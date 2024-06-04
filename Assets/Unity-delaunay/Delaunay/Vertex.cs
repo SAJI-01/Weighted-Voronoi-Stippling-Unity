@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Delaunay.LR;
 
 namespace Delaunay
 {
@@ -9,31 +8,37 @@ namespace Delaunay
 	{
 		public static readonly Vertex VERTEX_AT_INFINITY = new Vertex (float.NaN, float.NaN);
 		
-		private static Stack<Vertex> _pool = new Stack<Vertex> ();
+		private static Stack<Vertex> pool = new Stack<Vertex> (); //pool of available vertices how to Find particular vertex location in pool?
+		
+		private static int nVertices = 0;
+		
 		private static Vertex Create (float x, float y)
 		{
 			if (float.IsNaN (x) || float.IsNaN (y)) {
-				return VERTEX_AT_INFINITY;
+				return VERTEX_AT_INFINITY; 
 			}
-			if (_pool.Count > 0) {
-				return _pool.Pop ().Init (x, y);
+			if (pool.Count > 0) {
+				return pool.Pop ().Init (x, y);
 			} else {
 				return new Vertex (x, y);
 			}
 		}
 
 
-		private static int _nvertices = 0;
 		
-		private Vector2 _coord;
-		public Vector2 Coord {
-			get { return _coord;}
-		}
-		private int _vertexIndex;
-		public int vertexIndex {
-			get { return _vertexIndex;}
+		private Vector2 coord;
+		public Vector2 Coord
+		{
+			get => coord;
+			set => coord = value;
 		}
 		
+		public float x => coord.x;
+		public float y => coord.y;
+
+		private int vertexIndex; 
+		public int VertexIndex => vertexIndex;
+
 		public Vertex (float x, float y)
 		{
 			Init (x, y);
@@ -41,23 +46,23 @@ namespace Delaunay
 		
 		private Vertex Init (float x, float y)
 		{
-			_coord = new Vector2 (x, y);
+			coord = new Vector2 (x, y);
 			return this;
 		}
 		
 		public void Dispose ()
 		{
-			_pool.Push (this);
+			pool.Push (this);
 		}
 		
 		public void SetIndex ()
 		{
-			_vertexIndex = _nvertices++;
+			vertexIndex = nVertices++; 
 		}
 		
 		public override string ToString ()
 		{
-			return "Vertex (" + _vertexIndex + ")";
+			return "Vertex (" + vertexIndex + ")"; 
 		}
 
 		/**
@@ -68,7 +73,7 @@ namespace Delaunay
 		 * @return 
 		 * 
 		 */
-		public static Vertex Intersect (Halfedge halfedge0, Halfedge halfedge1)
+		public static Vertex Intersect (Halfedge halfedge0, Halfedge halfedge1) 
 		{
 			Edge edge0, edge1, edge;
 			Halfedge halfedge;
@@ -101,20 +106,14 @@ namespace Delaunay
 				edge = edge1;
 			}
 			rightOfSite = intersectionX >= edge.rightSite.x;
-			if ((rightOfSite && halfedge.leftRight == Side.LEFT)
-				|| (!rightOfSite && halfedge.leftRight == Side.RIGHT)) {
+			if ((rightOfSite && halfedge.leftRight == LR.LEFT)
+				|| (!rightOfSite && halfedge.leftRight == LR.RIGHT)) {
 				return null;
 			}
 		
-			return Vertex.Create (intersectionX, intersectionY);
+			return Create (intersectionX, intersectionY);
 		}
 		
-		public float x {
-			get { return _coord.x;}
-		}
-		public float y {
-			get{ return _coord.y;}
-		}
-		
+
 	}
 }

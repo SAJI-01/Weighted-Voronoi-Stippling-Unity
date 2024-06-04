@@ -2,30 +2,13 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Delaunay.Geo;
-using Delaunay.LR;
 
 namespace Delaunay
 {
-	//	import com.nodename.geom.LineSegment;
-	//	
-	//	import flash.display.BitmapData;
-	//	import flash.display.CapsStyle;
-	//	import flash.display.Graphics;
-	//	import flash.display.LineScaleMode;
-	//	import flash.display.Sprite;
-	//	import flash.geom.Point;
-	//	import flash.geom.Rectangle;
-	//	import flash.utils.Dictionary;
-		
-	/**
-		 * The line segment connecting the two Sites is part of the Delaunay triangulation;
-		 * the line segment connecting the two Vertices is part of the Voronoi diagram
-		 * 
-		 * 
-		 */
+
 	public sealed class Edge
 	{
-		private static Stack<Edge> _pool = new Stack<Edge> ();
+		private static Stack<Edge> pool = new Stack<Edge> ();
 
 		/**
 			 * This is the only way to create a new Edge 
@@ -54,7 +37,7 @@ namespace Delaunay
 				c /= dy;
 			}
 				
-			Edge edge = Edge.Create ();
+			var edge = Create ();
 			
 			edge.leftSite = site0;
 			edge.rightSite = site1;
@@ -67,7 +50,7 @@ namespace Delaunay
 			edge.a = a;
 			edge.b = b;
 			edge.c = c;
-			//trace("createBisectingEdge: a ", edge.a, "b", edge.b, "c", edge.c);
+			
 				
 			return edge;
 		}
@@ -75,54 +58,28 @@ namespace Delaunay
 		private static Edge Create ()
 		{
 			Edge edge;
-			if (_pool.Count > 0) {
-				edge = _pool.Pop ();
+			if (pool.Count > 0) {
+				edge = pool.Pop ();
 				edge.Init ();
 			} else {
 				edge = new Edge ();
 			}
 			return edge;
 		}
-			
-		//		private static const LINESPRITE:Sprite = new Sprite();
-		//		private static const GRAPHICS:Graphics = LINESPRITE.graphics;
-		//		
-		//		private var _delaunayLineBmp:BitmapData;
-		//		internal function get delaunayLineBmp():BitmapData
-		//		{
-		//			if (!_delaunayLineBmp)
-		//			{
-		//				_delaunayLineBmp = makeDelaunayLineBmp();
-		//			}
-		//			return _delaunayLineBmp;
-		//		}
-		//		
-		//		// making this available to Voronoi; running out of memory in AIR so I cannot cache the bmp
-		//		internal function makeDelaunayLineBmp():BitmapData
-		//		{
-		//			var p0:Point = leftSite.coord;
-		//			var p1:Point = rightSite.coord;
-		//			
-		//			GRAPHICS.clear();
-		//			// clear() resets line style back to undefined!
-		//			GRAPHICS.lineStyle(0, 0, 1.0, false, LineScaleMode.NONE, CapsStyle.NONE);
-		//			GRAPHICS.moveTo(p0.x, p0.y);
-		//			GRAPHICS.lineTo(p1.x, p1.y);
-		//						
-		//			var w:int = int(Math.ceil(Math.max(p0.x, p1.x)));
-		//			if (w < 1)
-		//			{
-		//				w = 1;
-		//			}
-		//			var h:int = int(Math.ceil(Math.max(p0.y, p1.y)));
-		//			if (h < 1)
-		//			{
-		//				h = 1;
-		//			}
-		//			var bmp:BitmapData = new BitmapData(w, h, true, 0);
-		//			bmp.draw(LINESPRITE);
-		//			return bmp;
-		//			}
+		
+		public static List<Edge> SelectEdgesForSitePoint(Vector2 coord, List<Edge> edgesToTest) {
+			return edgesToTest.FindAll(
+				delegate(Edge e) {
+					if (e.leftSite != null) {
+						if (e.leftSite.Coord == coord) return true;
+					}
+					if (e.rightSite != null) {
+						if (e.rightSite.Coord == coord) return true;
+					}
+					return false;
+				});
+		}
+		
 
 		public LineSegment DelaunayLine ()
 		{
@@ -134,11 +91,11 @@ namespace Delaunay
 		{
 			if (!visible)
 				return new LineSegment (null, null);
-			return new LineSegment (_clippedVertices [Side.LEFT],
-	                                         _clippedVertices [Side.RIGHT]);
+			return new LineSegment (clippedVertices [LR.LEFT],
+	                                         clippedVertices [LR.RIGHT]);
 		}
 
-		private static int _nedges = 0;
+		private static int _nEdges = 0;
 			
 		public static readonly Edge DELETED = new Edge ();
 			
@@ -155,13 +112,13 @@ namespace Delaunay
 		public Vertex rightVertex {
 			get { return _rightVertex;}
 		}
-		public Vertex Vertex (Side leftRight)
+		public Vertex Vertex (LR leftRight)
 		{
-			return (leftRight == Side.LEFT) ? _leftVertex : _rightVertex;
+			return (leftRight == LR.LEFT) ? _leftVertex : _rightVertex;
 		}
-		public void SetVertex (Side leftRight, Vertex v)
+		public void SetVertex (LR leftRight, Vertex v)
 		{
-			if (leftRight == Side.LEFT) {
+			if (leftRight == LR.LEFT) {
 				_leftVertex = v;
 			} else {
 				_rightVertex = v;
@@ -198,29 +155,28 @@ namespace Delaunay
 			
 		// Once clipVertices() is called, this Dictionary will hold two Points
 		// representing the clipped coordinates of the left and right ends...
-		private Dictionary<Side,Nullable<Vector2>> _clippedVertices;
-		public Dictionary<Side,Nullable<Vector2>> clippedEnds {
-			get { return _clippedVertices;}
-		}
+		private Dictionary<LR,Nullable<Vector2>> clippedVertices;
+		public Dictionary<LR, Vector2?> clippedEnds => clippedVertices;
+
 		// unless the entire Edge is outside the bounds.
 		// In that case visible will be false:
 		public bool visible {
-			get { return _clippedVertices != null;}
+			get { return clippedVertices != null;}
 		}
 			
 		// the two input Sites for which this Edge is a bisector:
-		private Dictionary<Side,Site> _sites;
+		private Dictionary<LR,Site> _sites;
 		public Site leftSite {
-			get{ return _sites [Side.LEFT];}
-			set{ _sites [Side.LEFT] = value;}
+			get{ return _sites [LR.LEFT];}
+			set{ _sites [LR.LEFT] = value;}
 				
 		}
 		public Site rightSite {
-			get { return _sites [Side.RIGHT];}
-			set { _sites [Side.RIGHT] = value;}			
+			get { return _sites [LR.RIGHT];}
+			set { _sites [LR.RIGHT] = value;}			
 		}
 
-		public Site Site (Side leftRight)
+		public Site Site (LR leftRight)
 		{
 			return _sites [leftRight];
 		}
@@ -229,45 +185,40 @@ namespace Delaunay
 			
 		public void Dispose ()
 		{
-//			if (_delaunayLineBmp) {
-//				_delaunayLineBmp.Dispose ();
-//				_delaunayLineBmp = null;
-//			}
+
 			_leftVertex = null;
 			_rightVertex = null;
-			if (_clippedVertices != null) {
-				_clippedVertices [Side.LEFT] = null;
-				_clippedVertices [Side.RIGHT] = null;
-				_clippedVertices = null;
+			if (clippedVertices != null) 
+			{
+				clippedVertices [LR.LEFT] = null;
+				clippedVertices [LR.RIGHT] = null;
+				clippedVertices = null;
 			}
-			_sites [Side.LEFT] = null;
-			_sites [Side.RIGHT] = null;
+			_sites [LR.LEFT] = null;
+			_sites [LR.RIGHT] = null;
 			_sites = null;
 				
-			_pool.Push (this);
+			pool.Push (this);
 		}
 
 		private Edge ()
 		{
-			//			if (lock != PrivateConstructorEnforcer)
-			//			{
-			//				throw new Error("Edge: constructor is private");
-			//			}
+
 				
-			_edgeIndex = _nedges++;
+			_edgeIndex = _nEdges++;
 			Init ();
 		}
 			
 		private void Init ()
 		{	
-			_sites = new Dictionary<Side,Site> ();
+			_sites = new Dictionary<LR,Site> ();
 		}
 			
 		public override string ToString ()
 		{
-			return "Edge " + _edgeIndex.ToString () + "; sites " + _sites [Side.LEFT].ToString () + ", " + _sites [Side.RIGHT].ToString ()
-				+ "; endVertices " + ((_leftVertex != null) ? _leftVertex.vertexIndex.ToString () : "null") + ", "
-				+ ((_rightVertex != null) ? _rightVertex.vertexIndex.ToString () : "null") + "::";
+			return "Edge " + _edgeIndex.ToString () + "; sites " + _sites [LR.LEFT].ToString () + ", " + _sites [LR.RIGHT].ToString ()
+				+ "; endVertices " + ((_leftVertex != null) ? _leftVertex.VertexIndex.ToString () : "null") + ", "
+				+ ((_rightVertex != null) ? _rightVertex.VertexIndex.ToString () : "null") + "::";
 		}
 
 		/**
@@ -372,18 +323,17 @@ namespace Delaunay
 				}
 			}
 
-			//			_clippedVertices = new Dictionary(true); // XXX: Weak ref'd dict might be a problem to use standard
-			_clippedVertices = new Dictionary<Side,Nullable<Vector2>> ();
+
+			clippedVertices = new Dictionary<LR,Vector2?> ();
 			if (vertex0 == _leftVertex) {
-				_clippedVertices [Side.LEFT] = new Vector2 (x0, y0);
-				_clippedVertices [Side.RIGHT] = new Vector2 (x1, y1);
+				clippedVertices [LR.LEFT] = new Vector2 (x0, y0);
+				clippedVertices [LR.RIGHT] = new Vector2 (x1, y1);
 			} else {
-				_clippedVertices [Side.RIGHT] = new Vector2 (x0, y0);
-				_clippedVertices [Side.LEFT] = new Vector2 (x1, y1);
+				clippedVertices [LR.RIGHT] = new Vector2 (x0, y0);
+				clippedVertices [LR.LEFT] = new Vector2 (x1, y1);
 			}
 		}
 
 	}
 }
 
-//class PrivateConstructorEnforcer {}

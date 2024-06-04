@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Delaunay.Geo;
-using Delaunay.Utils;
 
 namespace Delaunay
 {
@@ -46,16 +45,16 @@ namespace Delaunay
 		public Site Next ()
 		{
 			if (_sorted == false) {
-				UnityEngine.Debug.LogError ("SiteList::next():  sites have not been sorted");
+				Debug.LogError ("SiteList::next():  sites have not been sorted");
 			}
-			if (_currentIndex < _sites.Count) {
-				return _sites [_currentIndex++];
+			if (_currentIndex < _sites.Count) { 
+				return _sites [_currentIndex++];  
 			} else {
 				return null;
 			}
 		}
 
-		internal Rect GetSitesBounds ()
+		internal Rect GetSitesBounds () 
 		{
 			if (_sorted == false) {
 				Site.SortSites (_sites);

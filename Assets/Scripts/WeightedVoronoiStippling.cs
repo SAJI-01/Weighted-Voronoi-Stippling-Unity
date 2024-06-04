@@ -5,106 +5,152 @@ using Delaunay.Geo;
 
 public class WeightedVoronoiStippling : MonoBehaviour
 {
-	[SerializeField] private int pointsCount = 100;
-	[SerializeField] private bool ShowVoronoiDiagram;
-	[SerializeField] private bool ShowLloydRelaxation;
+    [Header("Settings")]
+    [SerializeField] private Texture2D stipplingImage;
+    
+    [Space]
+    [SerializeField] private int initialPointsCount = 6000;
+    
+    [Space]
+    [SerializeField] private bool showRegularPoints;
+    [SerializeField] private bool showVoronoiDiagram;
+    
+    [Space]
+    [SerializeField] private float lerpFactor = 0.1f;
+    [SerializeField] private float pointSizeGizmos = 0.2f;
+    
+    
+    private Voronoi           voronoi;
+    private List<Vector2>     points;
+    private List<LineSegment> edges;
+    private const int         UpdateInterval = 10;
+    private int               frameCounter;
+    
 
-	private List<Vector2> points;
-	private List<Vector2> newPoints;
-	private List<uint> colors;
-	private float width = 64;
-	private float height = 64;
-	private List<LineSegment> edges = null;
+    private void Start()
+    {
+        GenerateRandomPoints(initialPointsCount);
+        CalculateVoronoiDiagram();
+    }
 
-	private void Update()
-	{
-		// generate new voronoi diagram
-		if (Input.anyKeyDown)
-		{
-			Setup();
-		}
+    private void Update()
+    {
+        frameCounter++;
+        if (frameCounter >= UpdateInterval)
+        {
+            CalculateCentroidsAndUpdatePoints();
+            CalculateVoronoiDiagram();
+            frameCounter = 0;
+        }
+    }
 
-		// lloyd relaxation algorithm to improve the voronoi diagram
-		if (ShowLloydRelaxation)
-		{
-			newPoints = new Voronoi(points, colors, new Rect(0, 0, width, height)).RelaxPoints();
-			points = newPoints;
-			edges = new Voronoi(points, colors, new Rect(0, 0, width, height)).VoronoiDiagram(); // update edges
-		}
-	}
+    private void GenerateRandomPoints(int count)
+    {
+        points = new List<Vector2>();
+        for (int i = 0; i < count; i++)
+        {
+            float x = Random.Range(0, stipplingImage.width);
+            float y = Random.Range(0, stipplingImage.height);
+            Color pixelColor = stipplingImage.GetPixel((int)x, (int)y);
+            float brightness = pixelColor.grayscale;
+            if (Random.Range(0f, 1f) > brightness)
+            {
+                points.Add(new Vector2(x, y));
+            }
+            else
+            {
+                i--;
+            }
+        }
+    }
 
-	private void Start()
-	{
-		Setup();
-	}
+    private void CalculateVoronoiDiagram()
+    {
+        voronoi = new Voronoi(points, new Rect(0, 0, stipplingImage.width, stipplingImage.height));
+        edges = voronoi.VoronoiDiagram();
+    }
 
-	private void Setup()
-	{
-		colors = new List<uint>();
-		points = new List<Vector2>();
-		
-		for (int i = 0; i < pointsCount; i++)
-		{
-			colors.Add(0);
-			points.Add(new Vector2(UnityEngine.Random.Range(0, width), UnityEngine.Random.Range(0, height)));
-		}
+    private void CalculateCentroidsAndUpdatePoints()
+    {
+        Dictionary<Vector2, Vector2> centroids = new Dictionary<Vector2, Vector2>();
+        Dictionary<Vector2, float> weights = new Dictionary<Vector2, float>();
 
-		var v = new Voronoi(points, colors, new Rect(0, 0, width, height));
-		edges = v.VoronoiDiagram();
+        foreach (var point in points)
+        {
+            centroids[point] = Vector2.zero;
+            weights[point] = 0f;
+        }
 
-		// lloyd relaxation
-		if (ShowLloydRelaxation)
-		{
-			newPoints = v.RelaxPoints();
-			points = newPoints;
-		}
-	}
-	
+        for (int i = 0; i < stipplingImage.width; i += 2)
+        {
+            for (int j = 0; j < stipplingImage.height; j += 2)
+            {
+                Color pixelColor = stipplingImage.GetPixel(i, j);
+                float brightness = pixelColor.grayscale;
+                float weight = 1 - brightness;
 
+                Vector2 nearestPoint = GetNearestPoint(new Vector2(i, j));
+                centroids[nearestPoint] += new Vector2(i, j) * weight;
+                weights[nearestPoint] += weight;
+            }
+        }
 
-	void OnDrawGizmos ()
-	{
-		// draw voronoi diagram
-		if (ShowVoronoiDiagram)
-		{
-			Gizmos.color = Color.red;
-			if (points != null)
-			{
-				for (int i = 0; i < points.Count; i++)
-				{
-					Gizmos.DrawSphere(points[i], 0.2f);
-				}
-			}
+        List<Vector2> newPoints = new List<Vector2>();
+        foreach (var point in points)
+        {
+            if (weights[point] > 0)
+            {
+                Vector2 centroid = centroids[point] / weights[point];
+                newPoints.Add(Vector2.Lerp(point, centroid, lerpFactor));
+            }
+            else
+            {
+                newPoints.Add(point);
+            }
+        }
+        points = newPoints;
+    }
 
-			if (edges != null)
-			{
-				foreach (var edge in edges)
-				{
-					Vector2 left = new Vector2(edge.p0.Value.x, edge.p0.Value.y);
-					Vector2 right = new Vector2(edge.p1.Value.x, edge.p1.Value.y);
-					Gizmos.DrawLine(left, right);
-				}
-			}
-		}
-		
-		// draw lloyd relaxation
-		if (ShowLloydRelaxation)
-		{
-			Gizmos.color = Color.blue;
-			if (newPoints != null)
-			{
-				for (int i = 0; i < newPoints.Count; i++)
-				{
-					Gizmos.DrawSphere(newPoints[i], 0.2f);
-				}
-			}
-		}
-		
-		//Bounding Box
-		Gizmos.color = Color.yellow;
-		Gizmos.DrawLine (new Vector2 (0, 0), new Vector2 (0, height));
-		Gizmos.DrawLine (new Vector2 (0, 0), new Vector2 (width, 0));
-		Gizmos.DrawLine (new Vector2 (width, 0), new Vector2 (width, height));
-		Gizmos.DrawLine (new Vector2 (0, height), new Vector2 (width, height));
-	}
+    private Vector2 GetNearestPoint(Vector2 pos)
+    {
+        Vector2 nearestPoint = points[0];
+        float minDistance = Vector2.Distance(pos, points[0]);
+        foreach (var point in points)
+        {
+            float distance = Vector2.Distance(pos, point);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearestPoint = point;
+            }
+        }
+        return nearestPoint;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (points != null && showRegularPoints)
+        {
+            Gizmos.color = Color.black;
+            foreach (var point in points)
+                Gizmos.DrawSphere(point, pointSizeGizmos);
+        }
+
+        if (showVoronoiDiagram && edges != null)
+        {
+            Gizmos.color = Color.black;
+            foreach (var edge in edges)
+            {
+                Vector2 left = edge.p0.Value;
+                Vector2 right = edge.p1.Value;
+                Gizmos.DrawLine(left, right);
+            }
+        }
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(new Vector2(0, 0), new Vector2(0, stipplingImage.height));
+        Gizmos.DrawLine(new Vector2(0, 0), new Vector2(stipplingImage.width, 0));
+        Gizmos.DrawLine(new Vector2(stipplingImage.width, 0), new Vector2(stipplingImage.width, stipplingImage.height));
+        Gizmos.DrawLine(new Vector2(0, stipplingImage.height), new Vector2(stipplingImage.width, stipplingImage.height));
+    }
 }

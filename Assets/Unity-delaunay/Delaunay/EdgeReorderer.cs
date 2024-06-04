@@ -1,5 +1,3 @@
-using Delaunay.LR;
-using Delaunay.Utils;
 using System.Collections.Generic;
 
 namespace Delaunay
@@ -13,18 +11,18 @@ namespace Delaunay
 	sealed class EdgeReorderer: Utils.IDisposable
 	{
 		private List<Edge> _edges;
-		private List<Side> _edgeOrientations;
+		private List<LR> edgeOrientations;
 		public List<Edge> edges {
 			get { return _edges;}
 		}
-		public List<Side> edgeOrientations {
-			get{ return _edgeOrientations;}
+		public List<LR> EdgeOrientations {
+			get{ return edgeOrientations;}
 		}
 		
 		public EdgeReorderer (List<Edge> origEdges, VertexOrSite criterion)
 		{
 			_edges = new List<Edge> ();
-			_edgeOrientations = new List<Side> ();
+			edgeOrientations = new List<LR> ();
 			if (origEdges.Count > 0) {
 				_edges = ReorderEdges (origEdges, criterion);
 			}
@@ -33,7 +31,7 @@ namespace Delaunay
 		public void Dispose ()
 		{
 			_edges = null;
-			_edgeOrientations = null;
+			edgeOrientations = null;
 		}
 
 		private List<Edge> ReorderEdges (List<Edge> origEdges, VertexOrSite criterion)
@@ -52,7 +50,7 @@ namespace Delaunay
 			i = 0;
 			edge = origEdges [i];
 			newEdges.Add (edge);
-			_edgeOrientations.Add (Side.LEFT);
+			edgeOrientations.Add (LR.LEFT);
 			ICoord firstPoint = (criterion == VertexOrSite.VERTEX) ? (ICoord)edge.leftVertex : (ICoord)edge.leftSite;
 			ICoord lastPoint = (criterion == VertexOrSite.VERTEX) ? (ICoord)edge.rightVertex : (ICoord)edge.rightSite;
 			
@@ -76,22 +74,22 @@ namespace Delaunay
 					}
 					if (leftPoint == lastPoint) {
 						lastPoint = rightPoint;
-						_edgeOrientations.Add (Side.LEFT);
+						edgeOrientations.Add (LR.LEFT);
 						newEdges.Add (edge);
 						done [i] = true;
 					} else if (rightPoint == firstPoint) {
 						firstPoint = leftPoint;
-						_edgeOrientations.Insert (0, Side.LEFT); // TODO: Change datastructure if this is slow
+						edgeOrientations.Insert (0, LR.LEFT); // TODO: Change datastructure if this is slow
 						newEdges.Insert (0, edge);
 						done [i] = true;
 					} else if (leftPoint == firstPoint) {
 						firstPoint = rightPoint;
-						_edgeOrientations.Insert (0, Side.RIGHT);
+						edgeOrientations.Insert (0, LR.RIGHT);
 						newEdges.Insert (0, edge);
 						done [i] = true;
 					} else if (rightPoint == lastPoint) {
 						lastPoint = leftPoint;
-						_edgeOrientations.Add (Side.RIGHT);
+						edgeOrientations.Add (LR.RIGHT);
 						newEdges.Add (edge);
 						done [i] = true;
 					}

@@ -127,3 +127,61 @@ public class WeightedVoronoiStippling : MonoBehaviour
 		Gizmos.DrawLine (new Vector2 (0, height), new Vector2 (width, height));
 	}
 }
+
+
+	/*  public List<Vector2> LloydRelaxPoints() //Lloyd's Relaxation Algorithm
+		{
+			//Iterate through all the sites
+			List<Vector2> newPoints = new List<Vector2>();
+			_sites.ResetListIndex(); //Reset the index of the list of sites
+			Site points = _sites.Next(); 
+
+			while (points != null)
+			{
+				//Get the region of the point. Region is a list of points that are the corners of the polygon that represents the region of the point.
+				List<Vector2> region = points.Region(plotBounds); 
+				if (region.Count < 1)
+				{
+					points = _sites.Next();
+					continue;
+				}
+
+				Vector2 centroid = Vector2.zero;
+				float area = 0;
+				float x0 = 0;
+				float y0 = 0;
+				float x1 = 0;
+				float y1 = 0;
+				float crossValue = 0;
+				for (int i = 0; i < region.Count - 1; i++)
+				{
+					x0 = region[i].x;
+					y0 = region[i].y;
+					x1 = region[i + 1].x;
+					y1 = region[i + 1].y;
+					crossValue = x0 * y1 - x1 * y0; //CrossProduct
+					area += crossValue;
+					centroid.x += (x0 + x1) * crossValue; // x component of centroid
+					centroid.y += (y0 + y1) * crossValue; // y component of centroid
+				}
+				// Do last vertex
+				x0 = region[^1].x; // region[region.Count-1].x;
+				y0 = region[^1].y;
+				x1 = region[0].x;
+				y1 = region[0].y;
+				crossValue = x0 * y1 - x1 * y0;
+				area += crossValue;
+				centroid.x += (x0 + x1) * crossValue;
+				centroid.y += (y0 + y1) * crossValue;
+
+				area *= 0.5f;
+				centroid.x /= (6*area);
+				centroid.y /= (6*area);
+				newPoints.Add(centroid);
+				points = _sites.Next();
+			}
+			return newPoints;
+		} */ // Lloyd's Relaxation Algorithm (previous version)
+		
+		
+	
