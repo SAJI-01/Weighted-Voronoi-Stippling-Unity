@@ -1,12 +1,14 @@
-# Weighted-Voronoi-Stippling
+# Weighted-Voronoi-Stippling (inProcess)
 
 **Unity 2022.3.20f1**
+
+**Unity-Delaunay Library By [Julian Ceipek](https://github.com/jceipek/Unity-delaunay)**
 
 **Adopted And Modified By SAJI J ([1ime002](https://x.com/1ime002))**
 
 <img src= "./Images/LloydsRelaxation.png" width=600 height =560>
 
-## **AddedFixedandUpdated**
+## **Added Fixed and Updated**
 
 This File Contains:
  + Voronoi Diagram
@@ -58,6 +60,5 @@ https://www.youtube.com/watch?v=Bxdt6T_1qgc
 
 https://www.youtube.com/watch?v=ysLCuqcyJZA
 
-**Unity-Delaunay Library By [Julian Ceipek](https://github.com/jceipek/Unity-delaunay)**
 
 
