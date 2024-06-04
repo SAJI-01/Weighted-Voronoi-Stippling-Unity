@@ -6,7 +6,14 @@
 
 **Adopted And Modified By SAJI J ([1ime002](https://x.com/1ime002))**
 
-<img src= "./Images/LloydsRelaxation.png" width=600 height =560>
+<img src= "./Images/LloydsRelaxation.png" width=512 height =512>
+
+<img src= "./Images/Oppenheimer.png" width=512 height =512>
+
+<img src= "./Images/GloriaPickel.png" width=512 height =480>
+
+<img src= "./Images/abraham lincoln.png" width=512 height =512>
+
 
 ## **Added Fixed and Updated**
 
