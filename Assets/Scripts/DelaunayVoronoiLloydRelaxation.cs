@@ -1,34 +1,29 @@
-using UnityEngine;
 using System.Collections.Generic;
 using Delaunay;
 using Delaunay.Geo;
-using UnityEngine.Serialization;
+using UnityEngine;
 
 public class DelaunayVoronoiLloydRelaxation : MonoBehaviour
 {
-    [Header("Settings")]
-    [SerializeField] private float width = 64;
+    [Header("Settings")] [SerializeField] private float width = 64;
     [SerializeField] private float height = 64;
-    
-    [Space]
-    [SerializeField] private int pointsCount = 100;
-    
-    [Space]
-    [SerializeField] private bool showRegularPoints = true;
+
+    [Space] [SerializeField] private int pointsCount = 100;
+
+    [Space] [SerializeField] private bool showRegularPoints = true;
     [SerializeField] private bool showDelaunayTriangulation;
     [SerializeField] private bool showVoronoiDiagram;
     [SerializeField] private bool showDelaunaySpanningTree;
     [SerializeField] private bool showLloydRelaxation;
     [SerializeField] private bool noLoop;
-    
-    [Space]
-    private Voronoi           voronoi;
-    private List<Vector2>     points;
-    private List<Vector2>     newPoints;
+
+    [Space] private Voronoi voronoi;
+    private List<Vector2> points;
+    private List<Vector2> newPoints;
     private List<LineSegment> edges;
     private List<LineSegment> spanningTree;
     private List<LineSegment> delaunayTriangulation;
-    
+
 
     private void Start()
     {
@@ -37,7 +32,6 @@ public class DelaunayVoronoiLloydRelaxation : MonoBehaviour
 
     private void Update()
     {
-        
         // generate new Voronoi diagram
         if (Input.GetKeyDown(KeyCode.Space)) Setup();
 
@@ -70,7 +64,8 @@ public class DelaunayVoronoiLloydRelaxation : MonoBehaviour
         }
 
         if (showVoronoiDiagram) edges = new Voronoi(points, new Rect(0, 0, width, height)).VoronoiDiagram();
-        if (showDelaunayTriangulation) { delaunayTriangulation = new Voronoi(points, new Rect(0, 0, width, height)).DelaunayTriangulation(); }
+        if (showDelaunayTriangulation)
+            delaunayTriangulation = new Voronoi(points, new Rect(0, 0, width, height)).DelaunayTriangulation();
         spanningTree = DelaunayHelpers.Kruskal(delaunayTriangulation, KruskalType.MAXIMUM);
         noLoop = false;
     }
@@ -78,17 +73,13 @@ public class DelaunayVoronoiLloydRelaxation : MonoBehaviour
     private void Setup()
     {
         points = new List<Vector2>();
-        for (var i = 0; i < pointsCount; i++)
-        {
-            points.Add(new Vector2(Random.Range(0, width), Random.Range(0, height)));
-        }
-        
+        for (var i = 0; i < pointsCount; i++) points.Add(new Vector2(Random.Range(0, width), Random.Range(0, height)));
+
         voronoi = new Voronoi(points, new Rect(0, 0, width, height));
         edges = voronoi.VoronoiDiagram();
         delaunayTriangulation = voronoi.DelaunayTriangulation();
-        
     }
-    
+
 
     private void OnDrawGizmos()
     {
@@ -146,7 +137,7 @@ public class DelaunayVoronoiLloydRelaxation : MonoBehaviour
         }
 
         // Bounding box
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.magenta;
         Gizmos.DrawLine(new Vector2(0, 0), new Vector2(0, height));
         Gizmos.DrawLine(new Vector2(0, 0), new Vector2(width, 0));
         Gizmos.DrawLine(new Vector2(width, 0), new Vector2(width, height));

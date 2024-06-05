@@ -5,23 +5,24 @@ using Delaunay.Geo;
 
 public class WeightedVoronoiStippling : MonoBehaviour
 {
-    [Header("Settings")]
-    [Space]
-    [SerializeField] private Texture2D stipplingImage;
+    [Header("Settings")] [Space] [SerializeField]
+    private Texture2D stipplingImage;
+
     [SerializeField] private int initialPointsCount = 6000;
-    [Header("Enable/Disable")]
-    [SerializeField] private bool showRegularPoints;
+
+    [Header("Enable/Disable")] [SerializeField]
+    private bool showRegularPoints;
+
     [SerializeField] private bool showVoronoiDiagram;
-    
-    [Space]
-    [SerializeField] private float lerpFactor = 0.1f;
+
+    [Space] [SerializeField] private float lerpFactor = 0.1f;
     [SerializeField] private int UpdateInterval = 10;
-    private float              width;
-    private float              height;
-    private Voronoi            voronoi;
-    private List<Vector2>      points;
-    private List<LineSegment>  edges;
-    private int                frameCounter = 0;
+    private float width;
+    private float height;
+    private Voronoi voronoi;
+    private List<Vector2> points;
+    private List<LineSegment> edges;
+    private int frameCounter = 0;
 
     private void Awake()
     {
@@ -49,20 +50,16 @@ public class WeightedVoronoiStippling : MonoBehaviour
     private void GenerateRandomPoints(int count)
     {
         points = new List<Vector2>();
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
-            float x = Random.Range(0, width);
-            float y = Random.Range(0, height);
-            Color pixelColor = stipplingImage.GetPixel((int)x, (int)y);
-            float brightness = pixelColor.grayscale;
+            var x = Random.Range(0, width);
+            var y = Random.Range(0, height);
+            var pixelColor = stipplingImage.GetPixel((int)x, (int)y);
+            var brightness = pixelColor.grayscale;
             if (Random.Range(0f, 1f) > brightness)
-            {
                 points.Add(new Vector2(x, y));
-            }
             else
-            {
                 i--;
-            }
         }
     }
 
@@ -83,49 +80,47 @@ public class WeightedVoronoiStippling : MonoBehaviour
             weights[point] = 0f;
         }
 
-        for (int i = 0; i < stipplingImage.width; i += 2) // step 2 to speed up the process
+        for (var i = 0; i < width; i += 2) // step 2 to speed up the process
+        for (var j = 0; j < height; j += 2)
         {
-            for (int j = 0; j < stipplingImage.height; j += 2)
-            {
-                Color pixelColor = stipplingImage.GetPixel(i, j);
-                float brightness = pixelColor.grayscale;
-                float weight = 1 - brightness;
+            var pixelColor = stipplingImage.GetPixel(i, j);
+            var brightness = pixelColor.grayscale;
+            var weight = 1 - brightness;
 
-                Vector2 nearestPoint = GetNearestPoint(new Vector2(i, j));
-                centroids[nearestPoint] += new Vector2(i, j) * weight;
-                weights[nearestPoint] += weight;
-            }
+            var nearestPoint = GetNearestPoint(new Vector2(i, j));
+            centroids[nearestPoint] += new Vector2(i, j) * weight;
+            weights[nearestPoint] += weight;
         }
 
-        List<Vector2> newPoints = new List<Vector2>();
+        var newPoints = new List<Vector2>();
         foreach (var point in points)
-        {
             if (weights[point] > 0)
             {
-                Vector2 centroid = centroids[point] / weights[point];
+                var centroid = centroids[point] / weights[point];
                 newPoints.Add(Vector2.Lerp(point, centroid, lerpFactor));
             }
             else
             {
                 newPoints.Add(point);
             }
-        }
+
         points = newPoints;
     }
 
     private Vector2 GetNearestPoint(Vector2 pos)
     {
-        Vector2 nearestPoint = points[0];
-        float minDistance = Vector2.Distance(pos, points[0]);
+        var nearestPoint = points[0];
+        var minDistance = Vector2.Distance(pos, points[0]);
         foreach (var point in points)
         {
-            float distance = Vector2.Distance(pos, point);
+            var distance = Vector2.Distance(pos, point);
             if (distance < minDistance)
             {
                 minDistance = distance;
                 nearestPoint = point;
             }
         }
+
         return nearestPoint;
     }
 
@@ -143,13 +138,13 @@ public class WeightedVoronoiStippling : MonoBehaviour
             Gizmos.color = Color.black;
             foreach (var edge in edges)
             {
-                Vector2 left = edge.p0.Value;
-                Vector2 right = edge.p1.Value;
+                var left = edge.p0.Value;
+                var right = edge.p1.Value;
                 Gizmos.DrawLine(left, right);
             }
         }
 
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.magenta;
         Gizmos.DrawLine(new Vector2(0, 0), new Vector2(0, height));
         Gizmos.DrawLine(new Vector2(0, 0), new Vector2(width, 0));
         Gizmos.DrawLine(new Vector2(width, 0), new Vector2(width, height));
