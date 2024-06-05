@@ -8,6 +8,8 @@
 
 <img src= "./Images/LloydsRelaxation.png" width=512 height =512>
 
+<img src= "./Images/VoronoiPhyllotaxis.png" width=500 height =300>
+
 <img src= "./Images/Oppenheimer.png" width=512 height =512>
 
 <img src= "./Images/GloriaPickel.png" width=512 height =480>
@@ -20,6 +22,7 @@
 This File Contains:
  + Weighted Voronoi Strippling
  + Voronoi Diagram
+ + Voronoi Phyllotaxis
  + Delaunay Triangulation
  + Fortunes Algorithm
  + Lloyd's Relaxation
