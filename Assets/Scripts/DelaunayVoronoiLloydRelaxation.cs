@@ -22,9 +22,9 @@ public class DelaunayVoronoiLloydRelaxation : MonoBehaviour
     [SerializeField] private bool noLoop;
     
     [Space]
-    private Voronoi voronoi;
-    private List<Vector2> points;
-    private List<Vector2> newPoints;
+    private Voronoi           voronoi;
+    private List<Vector2>     points;
+    private List<Vector2>     newPoints;
     private List<LineSegment> edges;
     private List<LineSegment> spanningTree;
     private List<LineSegment> delaunayTriangulation;
@@ -41,7 +41,7 @@ public class DelaunayVoronoiLloydRelaxation : MonoBehaviour
         // generate new Voronoi diagram
         if (Input.GetKeyDown(KeyCode.Space)) Setup();
 
-        // if mouse button is pressed, get the nearest point index
+        // if mouse button is pressed, get the nearest point index.
         if (Input.GetMouseButtonDown(0))
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

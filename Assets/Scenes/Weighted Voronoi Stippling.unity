@@ -152,12 +152,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 803a4f73b5184459a3352fc2a92c9d36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stipplingImage: {fileID: 2800000, guid: 9a5d82e551f456440a557c2fc888adf9, type: 3}
-  initialPointsCount: 6000
+  stipplingImage: {fileID: 2800000, guid: f4260b21a79816f4bbae6c4df1ae5aba, type: 3}
+  initialPointsCount: 20000
   showRegularPoints: 1
-  showVoronoiDiagram: 1
-  lerpFactor: 0.37
-  pointSizeGizmos: 0.15
+  showVoronoiDiagram: 0
+  lerpFactor: 0.1
+  UpdateInterval: 10
 --- !u!4 &85614200
 Transform:
   m_ObjectHideFlags: 0
@@ -219,12 +219,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 64
   height: 64
-  pointsCount: 100
+  pointsCount: 10000
   showRegularPoints: 1
   showDelaunayTriangulation: 0
   showVoronoiDiagram: 0
   showDelaunaySpanningTree: 0
-  showLloydRelaxation: 0
+  showLloydRelaxation: 1
   noLoop: 0
 --- !u!1 &330585543
 GameObject:

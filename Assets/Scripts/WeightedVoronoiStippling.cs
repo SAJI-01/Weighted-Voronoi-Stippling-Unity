@@ -6,26 +6,28 @@ using Delaunay.Geo;
 public class WeightedVoronoiStippling : MonoBehaviour
 {
     [Header("Settings")]
+    [Space]
     [SerializeField] private Texture2D stipplingImage;
-    
-    [Space]
     [SerializeField] private int initialPointsCount = 6000;
-    
-    [Space]
+    [Header("Enable/Disable")]
     [SerializeField] private bool showRegularPoints;
     [SerializeField] private bool showVoronoiDiagram;
     
     [Space]
     [SerializeField] private float lerpFactor = 0.1f;
-    [SerializeField] private float pointSizeGizmos = 0.2f;
-    
-    
-    private Voronoi           voronoi;
-    private List<Vector2>     points;
-    private List<LineSegment> edges;
-    private const int         UpdateInterval = 10;
-    private int               frameCounter;
-    
+    [SerializeField] private int UpdateInterval = 10;
+    private float              width;
+    private float              height;
+    private Voronoi            voronoi;
+    private List<Vector2>      points;
+    private List<LineSegment>  edges;
+    private int                frameCounter = 0;
+
+    private void Awake()
+    {
+        width = stipplingImage.width;
+        height = stipplingImage.height;
+    }
 
     private void Start()
     {
@@ -49,8 +51,8 @@ public class WeightedVoronoiStippling : MonoBehaviour
         points = new List<Vector2>();
         for (int i = 0; i < count; i++)
         {
-            float x = Random.Range(0, stipplingImage.width);
-            float y = Random.Range(0, stipplingImage.height);
+            float x = Random.Range(0, width);
+            float y = Random.Range(0, height);
             Color pixelColor = stipplingImage.GetPixel((int)x, (int)y);
             float brightness = pixelColor.grayscale;
             if (Random.Range(0f, 1f) > brightness)
@@ -66,14 +68,14 @@ public class WeightedVoronoiStippling : MonoBehaviour
 
     private void CalculateVoronoiDiagram()
     {
-        voronoi = new Voronoi(points, new Rect(0, 0, stipplingImage.width, stipplingImage.height));
+        voronoi = new Voronoi(points, new Rect(0, 0, width, height));
         edges = voronoi.VoronoiDiagram();
     }
 
     private void CalculateCentroidsAndUpdatePoints()
     {
-        Dictionary<Vector2, Vector2> centroids = new Dictionary<Vector2, Vector2>();
-        Dictionary<Vector2, float> weights = new Dictionary<Vector2, float>();
+        var centroids = new Dictionary<Vector2, Vector2>();
+        var weights = new Dictionary<Vector2, float>();
 
         foreach (var point in points)
         {
@@ -81,7 +83,7 @@ public class WeightedVoronoiStippling : MonoBehaviour
             weights[point] = 0f;
         }
 
-        for (int i = 0; i < stipplingImage.width; i += 2)
+        for (int i = 0; i < stipplingImage.width; i += 2) // step 2 to speed up the process
         {
             for (int j = 0; j < stipplingImage.height; j += 2)
             {
@@ -133,7 +135,7 @@ public class WeightedVoronoiStippling : MonoBehaviour
         {
             Gizmos.color = Color.black;
             foreach (var point in points)
-                Gizmos.DrawSphere(point, pointSizeGizmos);
+                Gizmos.DrawSphere(point, 0.2f);
         }
 
         if (showVoronoiDiagram && edges != null)
@@ -148,9 +150,9 @@ public class WeightedVoronoiStippling : MonoBehaviour
         }
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(new Vector2(0, 0), new Vector2(0, stipplingImage.height));
-        Gizmos.DrawLine(new Vector2(0, 0), new Vector2(stipplingImage.width, 0));
-        Gizmos.DrawLine(new Vector2(stipplingImage.width, 0), new Vector2(stipplingImage.width, stipplingImage.height));
-        Gizmos.DrawLine(new Vector2(0, stipplingImage.height), new Vector2(stipplingImage.width, stipplingImage.height));
+        Gizmos.DrawLine(new Vector2(0, 0), new Vector2(0, height));
+        Gizmos.DrawLine(new Vector2(0, 0), new Vector2(width, 0));
+        Gizmos.DrawLine(new Vector2(width, 0), new Vector2(width, height));
+        Gizmos.DrawLine(new Vector2(0, height), new Vector2(width, height));
     }
 }
