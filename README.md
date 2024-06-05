@@ -8,7 +8,7 @@
 
 <img src= "./Images/LloydsRelaxation.png" width=512 height =512>
 
-<img src= "./Images/VoronoiPhyllotaxis.png" width=500 height =300>
+![Voronoi Phyllotaxis](https://github.com/SAJI-01/Weighted-Voronoi-Stippling/assets/141253522/489c31ad-c449-4fb2-ae91-aeae0baa93cf)
 
 <img src= "./Images/Oppenheimer.png" width=512 height =512>
 
