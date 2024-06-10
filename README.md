@@ -10,17 +10,17 @@
 
 ![Voronoi Phyllotaxis](https://github.com/SAJI-01/Weighted-Voronoi-Stippling/assets/141253522/489c31ad-c449-4fb2-ae91-aeae0baa93cf)
 
-<img src= "./Images/Oppenheimer.png" width=512 height =512>
+<img src= "./Images/Oppenheimer.png" width=530 height =512>
 
-<img src= "./Images/GloriaPickel.png" width=512 height =480>
+<img src= "./Images/GloriaPickel.png" width=530 height =480>
 
-<img src= "./Images/abraham lincoln.png" width=512 height =512>
+<img src= "./Images/abraham lincoln.png" width=490 height =512>
 
 
 ## **Added Fixed and Updated**
 
 This File Contains:
- + Weighted Voronoi Strippling
+ + Weighted Voronoi Stippling 
  + Voronoi Diagram
  + Voronoi Phyllotaxis
  + Delaunay Triangulation
@@ -37,7 +37,7 @@ Area = 1/2 * Summation of (X0*Y1 - X1*Y0)
 
 CrossProduct = X0*Y1 - X1*Y0;
 
-First, Area is calculated for each cell By iterating through all Vertices
+First, the Area is calculated for each cell By iterating through all Vertices
 
 And then calculate the Cross Product of One Vertex(X0,Y0) and the Next Vertex(X1 + 1, Y1 + 1)
 last area/=2;
