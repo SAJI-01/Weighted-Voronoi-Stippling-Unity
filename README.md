@@ -1,4 +1,4 @@
-# Weighted-Voronoi-Stippling (Done)
+# Weighted-Voronoi-Stippling
 
 **Unity 2022.3.20f1**
 
