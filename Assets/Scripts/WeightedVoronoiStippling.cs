@@ -196,7 +196,7 @@ public class WeightedVoronoiStippling : MonoBehaviour
                 if (weights[i] > 0)
                 {
                     float2 centroid = centroids[i] / weights[i];
-                    newPoints[i] = math.lerp(points[i], centroid, lerpFactor);
+                    newPoints[i] = lerp(points[i], centroid, lerpFactor);
                 }
                 else
                 {
