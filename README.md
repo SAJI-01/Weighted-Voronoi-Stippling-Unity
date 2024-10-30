@@ -6,9 +6,23 @@
 
 **Adopted And Modified By SAJI J ([1ime002](https://x.com/1ime002))**
 
+**Inspired From The Coding Train**
+
+##
+
+**Lloyd's Relaxation & Voronoi Diagram**
+
 <img src= "./Images/LloydsRelaxation.png" width=512 height =512>
 
+**Dijkstra's Algorithm**
+
+<img src= "./Images/Dijkstra'sAlgorithm.gif" width=512 height =512>
+
+**Voronoi Phyllotaxis**
+
 ![Voronoi Phyllotaxis](https://github.com/SAJI-01/Weighted-Voronoi-Stippling/assets/141253522/489c31ad-c449-4fb2-ae91-aeae0baa93cf)
+
+**Weighted Voronoi Stippling Images:**
 
 <img src= "./Images/Oppenheimer.png" width=530 height =512>
 
@@ -26,6 +40,7 @@ This File Contains:
  + Delaunay Triangulation
  + Fortunes Algorithm
  + Lloyd's Relaxation
+ + Dijkstra's Algorithm (To Find Shortest Path) 
  + Spanning Tree of Delaunay Triangulation
 
 ## [Lloyd's Relaxation Explanation:](https://en.wikipedia.org/wiki/Lloyd%27s_algorithm)
@@ -71,5 +86,6 @@ https://www.youtube.com/watch?v=Bxdt6T_1qgc
 
 https://www.youtube.com/watch?v=ysLCuqcyJZA
 
+https://www.dotnetoffice.com/2022/10/dijkstra-algorithm-for-determining.html
 
 
